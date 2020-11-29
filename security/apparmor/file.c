@@ -39,38 +39,38 @@ static u32 map_mask_to_chr_mask(u32 mask)
  * @ab: audit_buffer  (NOT NULL)
  * @va: audit struct to audit values of  (NOT NULL)
  */
-static void file_audit_cb(struct audit_buffer *ab, void *va)
-{
-	struct common_audit_data *sa = va;
-	kuid_t fsuid = current_fsuid();
-	char str[10];
-
-	if (aad(sa)->request & AA_AUDIT_FILE_MASK) {
-		aa_perm_mask_to_str(str, sizeof(str), aa_file_perm_chrs,
-				    map_mask_to_chr_mask(aad(sa)->request));
-		audit_log_format(ab, " requested_mask=\"%s\"", str);
-	}
-	if (aad(sa)->denied & AA_AUDIT_FILE_MASK) {
-		aa_perm_mask_to_str(str, sizeof(str), aa_file_perm_chrs,
-				    map_mask_to_chr_mask(aad(sa)->denied));
-		audit_log_format(ab, " denied_mask=\"%s\"", str);
-	}
-	if (aad(sa)->request & AA_AUDIT_FILE_MASK) {
-		audit_log_format(ab, " fsuid=%d",
-				 from_kuid(&init_user_ns, fsuid));
-		audit_log_format(ab, " ouid=%d",
-				 from_kuid(&init_user_ns, aad(sa)->fs.ouid));
-	}
-
-	if (aad(sa)->peer) {
-		audit_log_format(ab, " target=");
-		aa_label_xaudit(ab, labels_ns(aad(sa)->label), aad(sa)->peer,
-				FLAG_VIEW_SUBNS, GFP_KERNEL);
-	} else if (aad(sa)->fs.target) {
-		audit_log_format(ab, " target=");
-		audit_log_untrustedstring(ab, aad(sa)->fs.target);
-	}
-}
+#static void file_audit_cb(struct audit_buffer *ab, void *va)
+#{
+#	struct common_audit_data *sa = va;
+#	kuid_t fsuid = current_fsuid();
+#	char str[10];
+#
+#	if (aad(sa)->request & AA_AUDIT_FILE_MASK) {
+#		aa_perm_mask_to_str(str, sizeof(str), aa_file_perm_chrs,
+#				    map_mask_to_chr_mask(aad(sa)->request));
+#		audit_log_format(ab, " requested_mask=\"%s\"", str);
+#	}
+#	if (aad(sa)->denied & AA_AUDIT_FILE_MASK) {
+#		aa_perm_mask_to_str(str, sizeof(str), aa_file_perm_chrs,
+#				    map_mask_to_chr_mask(aad(sa)->denied));
+#		audit_log_format(ab, " denied_mask=\"%s\"", str);
+#	}
+#	if (aad(sa)->request & AA_AUDIT_FILE_MASK) {
+#		audit_log_format(ab, " fsuid=%d",
+#				 from_kuid(&init_user_ns, fsuid));
+#		audit_log_format(ab, " ouid=%d",
+#				 from_kuid(&init_user_ns, aad(sa)->fs.ouid));
+#	}
+#
+#	if (aad(sa)->peer) {
+#		audit_log_format(ab, " target=");
+#		aa_label_xaudit(ab, labels_ns(aad(sa)->label), aad(sa)->peer,
+#				FLAG_VIEW_SUBNS, GFP_KERNEL);
+#	} else if (aad(sa)->fs.target) {
+#		audit_log_format(ab, " target=");
+#		audit_log_untrustedstring(ab, aad(sa)->fs.target);
+#	}
+#}
 
 /**
  * aa_audit_file - handle the auditing of file operations
